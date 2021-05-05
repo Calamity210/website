@@ -41,7 +41,7 @@ Scaffold(
           actions: <Widget>[
            TextButton(
              child: Text('DISMISS'),
-             onPressed: () => shouldShowBanner = false,
+             onPressed: () => setState(() => shouldShowBanner = false),
            ),
           ],
        ),
@@ -68,7 +68,9 @@ Scaffold(
           actions: <Widget>[
             TextButton(
               child: Text('DISMISS'),
-              onPressed: () => ScaffoldMessenger.of(context).hideCurrentMaterialBanner(),
+              onPressed: () {
+                ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+               }
             ),
           ],
         ),
@@ -78,130 +80,104 @@ Scaffold(
 );
 ```
 
-When presenting a `SnackBar` during a transition,
-the `SnackBar` completes a `Hero` animation,
+When presenting a `MaterialBanner` during a transition,
+the `MaterialBanner` completes a `Hero` animation,
 moving smoothly to the next page.
 
-The `ScaffoldMessenger` creates a scope in which all descendant
-`Scaffold`s register to receive `SnackBar`s,
-which is how they persist across these transitions.
-When using the root `ScaffoldMessenger` provided by the
-`MaterialApp`, all descendant `Scaffold`s receive `SnackBar`s,
-unless a new `ScaffoldMessenger` scope is created further down the tree.
-By instantiating your own `ScaffoldMessenger`,
-you can control which `Scaffold`s receive `SnackBar`s, and which do not based
-on the context of your application.
+A `Scaffold` can show at most one `MaterialBanner` at a time.
+If this function is called while another `MaterialBanner` is already visible,
+the given `MaterialBanner` will be added to a queue and displayed after
+the earlier `MaterialBanner`s have closed.
 
-The method `debugCheckHasScaffoldMessenger` is available to assert
-that a given context has a `ScaffoldMessenger` ancestor.
-Trying to present  a `SnackBar` without a `ScaffoldMessenger` ancestor
-present results in an assertion such as the following:
-
-```
-No ScaffoldMessenger widget found.
-Scaffold widgets require a ScaffoldMessenger widget ancestor.
-Typically, the ScaffoldMessenger widget is introduced by the MaterialApp
-at the top of your application widget tree.
-```
-
+To remove the `MaterialBanner` with an exit animation,
+use hideCurrentMaterialBanner or call ScaffoldFeatureController.close
+on the returned ScaffoldFeatureController.
+To remove a `MaterialBanner` suddenly (without an animation),
+use removeCurrentMaterialBanner.
 
 ## Migration guide
-
-{% comment %}
-  A description of how to make the change.
-  If a migration tool is available,
-  discuss it here. Even if there is a tool,
-  a description of how to make the change manually
-  must be provided. This section needs before and
-  after code examples that are relevant to the
-  developer.
-{% endcomment %}
 
 Code before migration:
 
 <!-- skip -->
 ```dart
-// Example of code before the change.
+// a bool is used to keep track of the MaterialBanner's visibility
+bool shouldShowBanner = false;
+
+...
+
+// Generally used in a Column, to place it above other widgets.
+Column(
+  children: <Widget>[
+    // An if statement is used to hide/show the banner
+    if(shouldShowBanner)
+      const MaterialBanner(
+       content: ...,
+        actions: <Widget>[
+         TextButton(
+           child: Text('DISMISS'),
+           // Hide the banner by setting the shouldShowBanner to false
+           onPressed: () => setState(() => shouldShowBanner = false),
+         ),
+        ],
+     ),
+    TextButton(
+      child: const Text('Show banner'),
+      // Change shouldShowBanner to true to show the banner
+      onPressed: () => setState(() => shouldShowBanner = true),
+    ),
+  ],
+);
 ```
 
 Code after migration:
 
 <!-- skip -->
 ```dart
-// Example of code after the change.
+ElevatedButton(
+  child: const Text('Show MaterialBanner'),
+  // ScaffoldMessengerState.showMaterialBanner() is called on
+  // to show the MaterialBanner.
+  onPressed: () => ScaffoldMessenger.of(context).showMaterialBanner(
+    MaterialBanner(
+      padding: EdgeInsets.all(20),
+      content: Text('Hello, I am a Material Banner'),
+      actions: <Widget>[
+        TextButton(
+          child: Text('DISMISS'),
+          onPressed: () {
+            // ScaffoldMessengerState.hideCurrentMaterialBanner() is
+            // called to remove the material banner with an exit animation
+            ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+           }
+        ),
+      ],
+    ),
+  )
 ```
 
 ## Timeline
 
-{% comment %}
-  The version # of the SDK where this change was
-  introduced.  If there is a deprecation window,
-  the version # to which we guarantee to maintain
-  the old API. Use the following template:
-
-  If a breaking change has been reverted in a
-  subsequent release, move that item to the
-  "Reverted" section of the index.md file.
-  Also add the "Reverted in version" line,
-  shown as optional below. Otherwise, delete
-  that line.
-{% endcomment %}
-
-Landed in version: xxx<br>
+Landed in version: not yet<br>
 In stable release: not yet
-Reverted in version: xxx  (OPTIONAL, delete if not used)
 
 ## References
 
-{% comment %}
-  These links are commented out because they
-  cause the GitHubActions (GHA) linkcheck to fail.
-  Remove the comment tags once you fill this in with
-  real links. Only use the "master-api" include if
-  you link to "master-api.flutter.dev".
-
-{% include master-api.md %}
-
 API documentation:
-
-* [`ClassName`][]
+* [`Scaffold`][]
+* [`ScaffoldMessenger`][]
+* [`MaterialBanner`][]
+* [`MaterialApp`][]
 
 Relevant issues:
-
-* [Issue xxxx][]
-* [Issue yyyy][]
+* [Issue #60024][]
 
 Relevant PRs:
+* [Integrate MaterialBanner with the ScaffoldMessenger API][]
 
-* [PR title #1][]
-* [PR title #2][]
-{% endcomment %}
-
-{% comment %}
-  Add the links to the end of the file in alphabetical order.
-  The following links are commented out because they make
-  the GitHubActions (GHA) link checker believe they are broken links,
-  but please remove the comment tags before you commit!
-
-  If you are sharing new API that hasn't landed in
-  the stable channel yet, use the master channel link.
-  To link to docs on the master channel,
-  include the following note and make sure that
-  the URL includes the master link (as shown below).
-
-  Here's an example of defining a stable (site.api) link
-  and a master channel (master-api) link.
-
-<!-- Stable channel link: -->
-[`ClassName`]: {{site.api}}/flutter/[link_to_relevant_page].html
-
-<!-- Master channel link: -->
-{% include master-api.md %}
-
-[`ClassName`]: https://master-api.flutter.dev/flutter/[link_to_relevant_page].html
-
-[Issue xxxx]: {{site.github}}/flutter/flutter/issues/[link_to_actual_issue]
-[Issue yyyy]: {{site.github}}/flutter/flutter/issues/[link_to_actual_issue]
-[PR title #1]: {{site.github}}/flutter/flutter/pull/[link_to_actual_pr]
-[PR title #2]: {{site.github}}/flutter/flutter/pull/[link_to_actual_pr]
-{% endcomment %}
+[`Scaffold`]: {{site.api}}/flutter/material/Scaffold-class.html
+[`ScaffoldMessenger`]: {{site.api}}/flutter/material/ScaffoldMessenger-class.html
+[`MaterialBanner`]: {{site.api}}/flutter/material/MaterialBanner-class.html
+[`MaterialApp`]: {{site.api}}/flutter/material/MaterialApp-class.html
+[Issue #60024]: {{site.github}}/flutter/flutter/issues/60024
+[Integrate MaterialBanner with the ScaffoldMessenger API]: {{site.github}}/flutter/flutter/pull/81706
