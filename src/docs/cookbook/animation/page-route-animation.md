@@ -49,7 +49,7 @@ a second route titled "Page 2".
 ```dart
 import 'package:flutter/material.dart';
 
-main() {
+void main() {
   runApp(
     MaterialApp(
       home: Page1(),
@@ -58,15 +58,16 @@ main() {
 }
 
 class Page1 extends StatelessWidget {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
       body: Center(
         child: ElevatedButton(
-          child: Text('Go!'),
           onPressed: () {
             Navigator.of(context).push(_createRoute());
           },
+          child: Text('Go!'),
         ),
       ),
     );
@@ -83,6 +84,7 @@ Route _createRoute() {
 }
 
 class Page2 extends StatelessWidget {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
@@ -228,7 +230,7 @@ transitionsBuilder: (context, animation, secondaryAnimation, child) {
 ```run-dartpad:theme-light:mode-flutter:run-true:width-100%:height-600px:split-60:ga_id-interactive_example:null_safety-true
 import 'package:flutter/material.dart';
 
-main() {
+void main() {
   runApp(
     MaterialApp(
       home: Page1(),
@@ -237,15 +239,16 @@ main() {
 }
 
 class Page1 extends StatelessWidget {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
       body: Center(
         child: ElevatedButton(
-          child: Text('Go!'),
           onPressed: () {
             Navigator.of(context).push(_createRoute());
           },
+          child: Text('Go!'),
         ),
       ),
     );
@@ -271,6 +274,7 @@ Route _createRoute() {
 }
 
 class Page2 extends StatelessWidget {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),

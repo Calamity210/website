@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 // #docregion fetchAlbum
 Future<Album> fetchAlbum(http.Client client) async {
   final response =
-      await client.get(Uri.https('jsonplaceholder.typicode.com', 'albums/1'));
+      await client.get(Uri.parse('https://jsonplaceholder.typicode.com/albums/1'));
 
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response,
@@ -73,7 +73,7 @@ class _MyAppState extends State<MyApp> {
               if (snapshot.hasData) {
                 return Text(snapshot.data!.title);
               } else if (snapshot.hasError) {
-                return Text("${snapshot.error}");
+                return Text('${snapshot.error}');
               }
 
               // By default, show a loading spinner.

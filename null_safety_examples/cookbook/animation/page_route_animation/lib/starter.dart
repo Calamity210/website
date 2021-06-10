@@ -2,7 +2,7 @@
 // #docregion Starter
 import 'package:flutter/material.dart';
 
-main() {
+void main() {
   runApp(
     MaterialApp(
       home: Page1(),
@@ -11,15 +11,16 @@ main() {
 }
 
 class Page1 extends StatelessWidget {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
       body: Center(
         child: ElevatedButton(
-          child: Text('Go!'),
           onPressed: () {
             Navigator.of(context).push(_createRoute());
           },
+          child: Text('Go!'),
         ),
       ),
     );
@@ -36,6 +37,7 @@ Route _createRoute() {
 }
 
 class Page2 extends StatelessWidget {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),

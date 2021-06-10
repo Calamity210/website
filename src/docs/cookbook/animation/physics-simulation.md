@@ -38,7 +38,7 @@ Start with a stateful widget called `DraggableCard`:
 ```dart
 import 'package:flutter/material.dart';
 
-main() {
+void main() {
   runApp(MaterialApp(home: PhysicsCardDragDemo()));
 }
 
@@ -347,7 +347,7 @@ onPanEnd: (details) {
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 
-main() {
+void main() {
   runApp(MaterialApp(home: PhysicsCardDragDemo()));
 }
 
